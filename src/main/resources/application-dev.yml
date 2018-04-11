@@ -1,0 +1,19 @@
+server:
+  port: 8001
+  servlet:
+    context-path: /spring-boot
+
+admin:
+  name: v-dev
+  password: v-dev
+  content: ${admin.name} + ${admin.password}
+
+spring:
+  jpa:
+    show-sql: true
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java
+    livereload:
+      enabled: true
