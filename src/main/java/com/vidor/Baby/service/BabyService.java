@@ -3,6 +3,9 @@ package com.vidor.Baby.service;
 import com.vidor.Baby.entity.Baby;
 import com.vidor.Baby.model.BabyModel;
 import com.vidor.Baby.repository.BabyRepository;
+import com.vidor.Baby.repository.BabyRepositoryCustom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class BabyService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BabyService.class);
 
     @Autowired
     private BabyRepository babyRepository;
@@ -46,6 +51,7 @@ public class BabyService {
     }
 
     public List<BabyModel> findAll() {
+        logger.info("cool customized repository invocation:{}", babyRepository.sayHello());
         List<BabyModel> babyModels = new ArrayList<>();
         List<Baby> babyList = babyRepository.findAll();
         for (Baby baby : babyList) {
