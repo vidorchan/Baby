@@ -111,4 +111,31 @@ public class BabyApiController {
         babyService.insertTwo();
         return "insert success";
     }
+
+    @PostMapping("/groupAge")
+    public Object groupAge() {
+        babyRepository.groupByBabyAsSql();
+        logger.info("group by own sql : {}", babyRepository.groupByBabyAsSql());
+        return "group age success.";
+    }
+
+    @PostMapping("/groupAgeH")
+    public Object groupAgeH() {
+        babyRepository.groupByBabyAsHql();
+        logger.info("group by own sql : {}", babyRepository.groupByBabyAsHql());
+        return "group age H success.";
+    }
+
+    @PostMapping("/groupAgeS/{number}")
+    public Object groupAgeS(@PathVariable Integer number) {
+        babyRepository.groupBybabyAsSpecification(number);
+        logger.info("group by own sql : {}", babyRepository.groupBybabyAsSpecification(number));
+        return "group age S success.";
+    }
+
+    @GetMapping("findBaby/{age}")
+    public Object findBabyQ(@PathVariable Integer age) {
+        logger.info("find a baby using Query : {}",babyRepository.findBaby(age).toString());
+        return "find baby using Query success";
+    }
 }
