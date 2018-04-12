@@ -138,4 +138,16 @@ public class BabyApiController {
         logger.info("find a baby using Query : {}",babyRepository.findBaby(age).toString());
         return "find baby using Query success";
     }
+
+    @GetMapping("findBabyAge/{age}")
+    public Object findByAgeCache(@PathVariable Integer age) {
+        logger.info("find a baby by cache : {}",babyRepository.findByAgeCache(age).toString());
+        return "find babies using cache";
+    }
+
+    @GetMapping("findBabyId/{id}")
+    public Object findByIdCache(@PathVariable Integer id) {
+        logger.info("find a baby by cache : {}",babyRepository.findByIdCache(id).toString());
+        return "find baby using cache";
+    }
 }

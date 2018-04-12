@@ -47,7 +47,34 @@ public class BabyRepositoryImpl implements BabyRepositoryCustom{
         Root<Baby> root = query.from(Baby.class);
         query.multiselect(root.get("age"),builder.count(root.get("id")))
                 .groupBy(root.get("age")).having(builder.gt(builder.count(root.get("id")),number));
-
         return entityManager.createQuery(query).getResultList();
+    }
+
+    /**
+     * List cache
+     * @param age
+     * @return
+     */
+    @Override
+    public List<Baby> findByAgeCache(Integer age) {
+        List<Baby> babies = entityManager.createQuery(
+                "select p " +
+                        "from Baby p " +
+                        "where p.age = :age", Baby.class)
+                .setParameter( "age", age)
+                .setHint( "org.hibernate.cacheable", "true")
+                .getResultList();
+        return babies;
+    }
+
+    /**
+     * Entity cache
+     * @param id
+     * @return
+     */
+    @Override
+    public Baby findByIdCache(Integer id) {
+        Baby baby = entityManager.find(Baby.class, id);
+        return baby;
     }
 }
