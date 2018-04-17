@@ -14,7 +14,16 @@ spring:
       enabled: false
     liveload:
       enabled: false
-
+#  messages:
+#    basename: i18n/deverrors
+#    cache-duration: 3600
+#    encoding: UTF-8
+#    always-use-message-format: false
+#    fallback-to-system-locale: true
+#    use-code-as-default-message: false
+  http:
+    encoding:
+      force: true
 server:
   port: 8000
 
