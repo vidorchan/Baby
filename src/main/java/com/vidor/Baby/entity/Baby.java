@@ -36,6 +36,7 @@ public class Baby implements Serializable{
     @Max(value = 10, message = "exceed the limit")
     private Integer age;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC+8", locale = "zh")
     private Date dob;
 
    // private String nation;
