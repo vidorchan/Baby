@@ -2,7 +2,12 @@ package com.vidor.Baby.repository.impl;
 
 import com.vidor.Baby.entity.Baby;
 import com.vidor.Baby.repository.BabyRepositoryCustom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,9 +18,14 @@ import java.util.List;
 
 public class BabyRepositoryImpl implements BabyRepositoryCustom{
 
+    private static final Logger logger = LoggerFactory.getLogger(BabyRepositoryImpl.class);
+
     @Autowired
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public String sayHello() {
@@ -75,6 +85,15 @@ public class BabyRepositoryImpl implements BabyRepositoryCustom{
     @Override
     public Baby findByIdCache(Integer id) {
         Baby baby = entityManager.find(Baby.class, id);
+        redisTemplate.opsForValue().set(id.toString(), baby);
+        logger.info(" value from redis: {}",redisTemplate.opsForValue().get(id.toString()).toString());
         return baby;
+    }
+
+    @Override
+    public void deleteBaby(Integer id) {
+        entityManager.createQuery("delete from Baby where id = :id")
+                .setParameter("id", id);
+        redisTemplate.delete(id.toString());
     }
 }

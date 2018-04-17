@@ -19,6 +19,15 @@ spring:
           use_second_level_cache: true #二级缓存
           use_query_cache: true #查询缓存
     show-sql: true
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: redis
+    database: 5
+    timeout: 3000 #3s
+#    sentinel:
+#      master: mymaster #name of the master node
+#      nodes: 127.0.0.1:26380 #Comma delimited list of host:port pairs.
   devtools:
     restart:
       enabled: true

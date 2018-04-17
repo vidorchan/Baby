@@ -18,4 +18,5 @@ public interface BabyRepositoryCustom{
     List<Baby> findByAgeCache(Integer age);
     //cache Entity
     Baby findByIdCache(Integer id);
+    void deleteBaby(Integer id);
 }

@@ -11,6 +11,9 @@ import com.vidor.Baby.utils.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/babies")
@@ -51,6 +52,10 @@ public class BabyApiController {
      * @param baby
      * @return
      */
+    /*
+    表明Spring应该将该方法返回值放到缓存中，在方法调用前不会检查缓存，方法始终会被调用
+     */
+    @CachePut(value = "baby")
     @PostMapping("/add")
     public Baby addBaby(@Valid Baby baby) {
         return babyRepository.save(baby);
@@ -78,6 +83,10 @@ public class BabyApiController {
      * @param id
      * @return
      */
+    /*
+    表明Spring应该在缓存中清除一个或多个条目
+     */
+    @CacheEvict(value = "baby")
     @DeleteMapping("/{id}")
     public String deleteBaby(@PathVariable Integer id) {
         babyRepository.deleteById(id);
@@ -145,9 +154,29 @@ public class BabyApiController {
         return "find babies using cache";
     }
 
+    /*
+    表明在Spring调用之前，首先应该在缓存中查找方法的返回值，如果这个值能够找到，就会返回缓存的值，否则这个方法会被调用，返回值会放到缓存中
+     */
+    @Cacheable(value = "baby")
     @GetMapping("findBabyId/{id}")
-    public Object findByIdCache(@PathVariable Integer id) {
+    public Baby findByIdCache(@PathVariable Integer id) {
         logger.info("find a baby by cache : {}",babyRepository.findByIdCache(id).toString());
-        return "find baby using cache";
+        return babyRepository.findByIdCache(id);
+    }
+
+    @DeleteMapping("redis/{id}")
+    public void deleteRedisId(@PathVariable Integer id) {
+        babyRepository.deleteBaby(id);
+    }
+
+     /*
+    表明Spring应该将该方法返回值放到缓存中，在方法调用前不会检查缓存，方法始终会被调用
+    , key = "#root.caches[0].name + ':' + #baby.id"
+     */
+    @CachePut(value = "baby", key = "#id")
+    @PutMapping("/redis/update/{id}")
+    public Baby updateRedis(@PathVariable Integer id, Baby baby) {
+        baby.setId(id);
+        return babyRepository.save(baby);
     }
 }

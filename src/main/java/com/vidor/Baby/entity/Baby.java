@@ -14,12 +14,13 @@ import javax.persistence.Id;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @JsonIgnoreProperties(ignoreUnknown = true, value = {"hibernateLazyInitializer", "handler", "fieldHandler"})
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Baby {
+public class Baby implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
