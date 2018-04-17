@@ -2,9 +2,9 @@ package com.vidor.Baby.enums;
 
 public enum ExceptionEnum {
 
-    OK(0, "success"),
-    UNKNOW_EXCEPTION(-1, "unknow error"),
-    PARAMTER_EXCEPTION(100, "parameter error");
+    OK(0, "default.success"),
+    UNKNOW_EXCEPTION(-1, "unknow.error"),
+    PARAMTER_EXCEPTION(100, "parameter.error");
 
     private Integer code;
 

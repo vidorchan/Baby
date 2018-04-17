@@ -10,12 +10,15 @@ import com.vidor.Baby.service.BabyService;
 import com.vidor.Baby.utils.ResultUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang.LocaleUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.MessageSource;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +41,10 @@ public class BabyApiController {
     private static final Logger logger = LoggerFactory.getLogger(BabyApiController.class);
 
     private static final String RLS = "Requested locale string. See section 14.4: https://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html";
+
+    @Autowired
+    @Qualifier(value = "devErrorMessageSource")
+    private MessageSource messageSource;
 
     @Autowired
     private BabyRepository babyRepository;
@@ -88,7 +95,10 @@ public class BabyApiController {
 //            return bindingResult.getFieldError().getDefaultMessage();
         }
         baby.setId(id);
-        return ResultUtil.ok(babyRepository.save(baby));
+        Result  result = ResultUtil.ok(babyRepository.save(baby));
+        String[] args = {"param1", "param2"};
+        result.setMsg(messageSource.getMessage(result.getMsg(), args, LocaleUtils.toLocale(acceptLanguage)));
+        return result;
     }
 
     /**
