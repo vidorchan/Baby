@@ -3,6 +3,7 @@ package com.vidor.Baby.controller;
 import com.vidor.Baby.config.AdminConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 //@Controller
 //@ResponseBody
 @RestController
+@RefreshScope
 public class BabyController {
 
     @Autowired
@@ -25,6 +29,9 @@ public class BabyController {
 
     @Value("${admin.content}")
     private String content;
+
+    @Value("${admin.test}")
+    private String test;
 
     @RequestMapping(value = "/hello")//accept post and get
     public String sayH() {
@@ -35,7 +42,7 @@ public class BabyController {
     @GetMapping(value = {"/hello","/hi"})
     //public ResponseEntity say() {
     public String say() {
-        return adminConfig.getName() + " " + adminConfig.getPassword() + " " + content;
+        return adminConfig.getName() + " " + adminConfig.getPassword() + " " + content + "test: " + test;
     }
 
     @GetMapping(value = "/showUser/{id}")
