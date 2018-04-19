@@ -10,6 +10,18 @@ admin:
   content: ${admin.name} + ${admin.password}
   test: lower priority when use spring cloud config
 
+spring:
+  core:
+    pool:
+      size: 5
+  max:
+    pool:
+      size: 30
+  queue:
+    capacity: 10
+  thread:
+    name:
+      prefix: MyExecutor-
 #support refresh
 #management:
 #  management:
