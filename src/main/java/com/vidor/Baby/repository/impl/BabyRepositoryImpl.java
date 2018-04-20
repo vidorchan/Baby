@@ -1,5 +1,6 @@
 package com.vidor.Baby.repository.impl;
 
+import com.vidor.Baby.config.RedisConfig;
 import com.vidor.Baby.entity.Baby;
 import com.vidor.Baby.repository.BabyRepositoryCustom;
 import org.slf4j.Logger;
@@ -24,8 +25,10 @@ public class BabyRepositoryImpl implements BabyRepositoryCustom{
     @PersistenceContext
     private EntityManager entityManager;
 
+//    @Autowired
+//    private RedisTemplate<String, Object> redisTemplate;
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+//    private RedisConfig redisConfig;
 
     @Override
     public String sayHello() {
@@ -85,8 +88,9 @@ public class BabyRepositoryImpl implements BabyRepositoryCustom{
     @Override
     public Baby findByIdCache(Integer id) {
         Baby baby = entityManager.find(Baby.class, id);
-        redisTemplate.opsForValue().set(id.toString(), baby);
-        logger.info(" value from redis: {}",redisTemplate.opsForValue().get(id.toString()).toString());
+//        RedisTemplate redisTemplate = redisConfig.redisTemplate();
+//        redisTemplate.opsForValue().set(id.toString(), baby);
+//        logger.info(" value from redis: {}",redisTemplate.opsForValue().get(id.toString()).toString());
         return baby;
     }
 
@@ -94,6 +98,7 @@ public class BabyRepositoryImpl implements BabyRepositoryCustom{
     public void deleteBaby(Integer id) {
         entityManager.createQuery("delete from Baby where id = :id")
                 .setParameter("id", id);
-        redisTemplate.delete(id.toString());
+//        RedisTemplate redisTemplate = redisConfig.redisTemplate();
+//        redisTemplate.delete(id.toString());
     }
 }

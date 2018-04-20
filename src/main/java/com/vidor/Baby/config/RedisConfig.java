@@ -34,11 +34,10 @@ import java.util.Set;
 /**
  * Redis configuration
  */
-@Configuration
-@EnableCaching
-public class RedisConfig extends CachingConfigurerSupport {
-
-    private static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);
+@FunctionalInterface
+public interface RedisConfig {
+//extends CachingConfigurerSupport
+    static final Logger logger = LoggerFactory.getLogger(RedisConfig.class);
 
 //    @Value("${spring.redis.host}")
 //    private String host;
@@ -103,30 +102,32 @@ public class RedisConfig extends CachingConfigurerSupport {
 //        };
 //    }
 
-    @Bean
-    //缓存管理器
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
-        Set<String> cacheNames = new HashSet<String>() {{
-            add("baby");
-        }};
-        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig())
-                .initialCacheNames(cacheNames)
-                .build();
-        return redisCacheManager;
-        /*RedisCacheManager rcm = new RedisCacheManager(redisTemplate);
-        // 多个缓存的名称,目前只定义了一个
-        rcm.setCacheNames(Arrays.asList("thisredis"));
-        //设置缓存默认过期时间(秒)
-        rcm.setDefaultExpiration(600);
-        return rcm;*/
-    }
+//    @Bean
+//    //缓存管理器
+//    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+//        Set<String> cacheNames = new HashSet<String>() {{
+//            add("baby");
+//        }};
+//        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+//                .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig())
+//                .initialCacheNames(cacheNames)
+//                .build();
+//        return redisCacheManager;
+//        /*RedisCacheManager rcm = new RedisCacheManager(redisTemplate);
+//        // 多个缓存的名称,目前只定义了一个
+//        rcm.setCacheNames(Arrays.asList("thisredis"));
+//        //设置缓存默认过期时间(秒)
+//        rcm.setDefaultExpiration(600);
+//        return rcm;*/
+//    }
+
+    RedisConnectionFactory getConnectionFactory();
 
     // 以下两种redisTemplate自由根据场景选择
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+    default RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
+        template.setConnectionFactory(getConnectionFactory());
 
         //使用Jackson2JsonRedisSerializer来序列化和反序列化redis的value值（默认使用JDK的序列化方式）
         //JdkSerializationRedisSerializer jdkRedisSerializer=new JdkSerializationRedisSerializer();
@@ -144,6 +145,23 @@ public class RedisConfig extends CachingConfigurerSupport {
         return template;
     }
 
+    @Bean
+    default CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+        Set<String> cacheNames = new HashSet<String>() {{
+            add("baby");
+        }};
+        RedisCacheManager redisCacheManager = RedisCacheManager.builder(connectionFactory)
+                .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig())
+                .initialCacheNames(cacheNames)
+                .build();
+        return redisCacheManager;
+        /*RedisCacheManager rcm = new RedisCacheManager(redisTemplate);
+        // 多个缓存的名称,目前只定义了一个
+        rcm.setCacheNames(Arrays.asList("thisredis"));
+        //设置缓存默认过期时间(秒)
+        rcm.setDefaultExpiration(600);
+        return rcm;*/
+    }
 
 //    @Bean
 //    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory factory) {
@@ -158,30 +176,30 @@ public class RedisConfig extends CachingConfigurerSupport {
      * 保证redis服务器出现连接等问题的时候不影响程序的正常运行，使得能够出问题时不用缓存
      * @return
      */
-    @Bean
-    @Override
-    public CacheErrorHandler errorHandler() {
-        CacheErrorHandler cacheErrorHandler = new CacheErrorHandler() {
-            @Override
-            public void handleCacheGetError(RuntimeException e, Cache cache, Object key) {
-                logger.error("redis异常：key=[{}]",key,e);
-            }
-
-            @Override
-            public void handleCachePutError(RuntimeException e, Cache cache, Object key, Object value) {
-                logger.error("redis异常：key=[{}]",key,e);
-            }
-
-            @Override
-            public void handleCacheEvictError(RuntimeException e, Cache cache, Object key)    {
-                logger.error("redis异常：key=[{}]",key,e);
-            }
-
-            @Override
-            public void handleCacheClearError(RuntimeException e, Cache cache) {
-                logger.error("redis异常：",e);
-            }
-        };
-        return cacheErrorHandler;
-    }
+//    @Bean
+//    @Override
+//    public CacheErrorHandler errorHandler() {
+//        CacheErrorHandler cacheErrorHandler = new CacheErrorHandler() {
+//            @Override
+//            public void handleCacheGetError(RuntimeException e, Cache cache, Object key) {
+//                logger.error("redis异常：key=[{}]",key,e);
+//            }
+//
+//            @Override
+//            public void handleCachePutError(RuntimeException e, Cache cache, Object key, Object value) {
+//                logger.error("redis异常：key=[{}]",key,e);
+//            }
+//
+//            @Override
+//            public void handleCacheEvictError(RuntimeException e, Cache cache, Object key)    {
+//                logger.error("redis异常：key=[{}]",key,e);
+//            }
+//
+//            @Override
+//            public void handleCacheClearError(RuntimeException e, Cache cache) {
+//                logger.error("redis异常：",e);
+//            }
+//        };
+//        return cacheErrorHandler;
+//    }
 }

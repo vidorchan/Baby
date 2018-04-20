@@ -21,6 +21,12 @@ public class ConfigService {
     @Value("${spring.thread.name.prefix}")
     private String springThreadNamePrefix;
 
+    @Value("${spring.redis.sentinel.master:#{null}}")
+    private String redisMaster;
+
+    @Value("${spring.redis.sentinel.nodes:#{null}}")
+    private String redisSentinels;
+
     public Integer getSpringCorePoolSize() {
         return springCorePoolSize;
     }
@@ -51,5 +57,21 @@ public class ConfigService {
 
     public void setSpringThreadNamePrefix(String springThreadNamePrefix) {
         this.springThreadNamePrefix = springThreadNamePrefix;
+    }
+
+    public String getRedisMaster() {
+        return redisMaster;
+    }
+
+    public void setRedisMaster(String redisMaster) {
+        this.redisMaster = redisMaster;
+    }
+
+    public String getRedisSentinels() {
+        return redisSentinels;
+    }
+
+    public void setRedisSentinels(String redisSentinels) {
+        this.redisSentinels = redisSentinels;
     }
 }
